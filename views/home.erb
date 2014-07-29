@@ -5,46 +5,69 @@
 
 
 
-  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-  <div id="map" style="width: 900px; height: 900px"></div>
+  <script src="http://www.mapquestapi.com/sdk/js/v7.1.s/mqa.toolkit.js?key=safewalkFmjtd%7Cluur2001ng%2C2a%3Do5-9a151a"></script>
 
+  <script type="text/javascript">
 
-  <script>
+    // An example of using the MQA.EventUtil to hook into the window load event and execute the defined
+    // function passed in as the last parameter. You could alternatively create a plain function here and
+    // have it executed whenever you like (e.g. <body onload="yourfunction">).
 
-    var map = L.map('map').setView([40.761922, -73.9441684], 13);
+    MQA.EventUtil.observe(window, 'load', function() {
 
-    L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      id: 'examples.map-i86knfo3'
-    }).addTo(map);
+      // create an object for options
+      var options = {
+        elt: document.getElementById('map'),           // ID of map element on page
+        zoom: 11,                                      // initial zoom level of the map
+        latLng: { lat: 40.7127, lng: -74.0059 },  // center of map in latitude/longitude
+        mtype: 'map',                                  // map type (map, sat, hyb); defaults to map
+        bestFitMargin: 0,                              // margin offset from map viewport when applying a bestfit on shapes
+        zoomOnDoubleClick: true                        // enable map to be zoomed in when double-clicking on map
+      };
 
-    var popup = L.popup();
+      // construct an instance of MQA.TileMap with the options object
+      window.map = new MQA.TileMap(options);
+    });
 
-    function onMapClick(e) {
-      popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(map);
-    }
+    // download the modules
+    MQA.withModule('largezoom', 'traffictoggle', 'viewoptions', 'geolocationcontrol', 'insetmapcontrol', 'mousewheel', function() {
 
-    map.on('click', onMapClick);
+      // add the Large Zoom control
+      map.addControl(
+        new MQA.LargeZoom(),
+        new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT, new MQA.Size(5,5))
+      );
 
-    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
-    }).addTo(map);
+      // add the Traffic toggle button
+      map.addControl(new MQA.TrafficToggle());
 
-    var heatmap = new L.DivHeatmapLayer();
+      // add the Map/Satellite toggle button
+      map.addControl(new MQA.ViewOptions());
 
-    heatmap.addTo(map);
+      // add the Geolocation button
+      map.addControl(
+        new MQA.GeolocationControl(),
+        new MQA.MapCornerPlacement(MQA.MapCorner.TOP_RIGHT, new MQA.Size(10,50))
+      );
 
-    heatmap.testAddData();
+      // add the small Inset Map with custom options
+      map.addControl(
+        new MQA.InsetMapControl({
+          size: { width: 150, height: 125 },
+          zoom: 3,
+          mapType: 'map',
+          minimized: true
+        }),
+        new MQA.MapCornerPlacement(MQA.MapCorner.BOTTOM_RIGHT)
+      );
 
+      // enable zooming with your mouse
+      map.enableMouseWheelZoom();
+    });
 
   </script>
+
+  <div id="map" style="width:900px; height:400px;"></div>
 
   <!-- LOGGED OUT HOME PAGE -->
 
